@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "new-york",
-  "componentName": "pascal-case",
   "rsc": false,
   "tsx": true,
   "tailwind": {
