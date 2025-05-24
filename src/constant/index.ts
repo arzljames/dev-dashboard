@@ -9,7 +9,7 @@ export const NAVIGATION_LINKS = [
   },
   {
     id: 2,
-    name: "Promodoro",
+    name: "Promodoro Timer",
     path: "/promodoro",
     icon: Timer,
   },
@@ -24,5 +24,28 @@ export const NAVIGATION_LINKS = [
     name: "Code Snippet",
     path: "/code-snippet",
     icon: Code,
+  },
+];
+
+export const TASK_PRIORITY_LEVEL = [
+  {
+    id: 1,
+    name: "Low",
+    color: "slate-500",
+  },
+  {
+    id: 2,
+    name: "Normal",
+    color: "emerald-500",
+  },
+  {
+    id: 3,
+    name: "High",
+    color: "orange-500",
+  },
+  {
+    id: 4,
+    name: "Ugent",
+    color: "red-500",
   },
 ];

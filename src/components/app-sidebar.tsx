@@ -6,11 +6,17 @@ import { useRouterState, Link } from "@tanstack/react-router";
 const AppSiderbar: React.FC = () => {
   const navigationLinks = NAVIGATION_LINKS ?? [];
   const { location } = useRouterState();
+  const [showDrawer, setShowDrawer] = React.useState<boolean>(true);
 
   return (
-    <div className="w-80 flex flex-col px-4 py-8">
-      <div className="cursor-pointer mb-16">
-        <img src={BrandLogo} alt="DevDashboard" className="w-52 h-auto" />
+    <div
+      className={`${showDrawer ? "w-72" : "w-20"} hidden transition md:flex flex-col px-4 py-8`}
+    >
+      <div
+        className="cursor-pointer  w-full h-20 "
+        onClick={() => setShowDrawer(!showDrawer)}
+      >
+        <img src={BrandLogo} alt="DevDashboard" className="w-[80%] h-auto" />
       </div>
 
       <ul>
@@ -20,10 +26,13 @@ const AppSiderbar: React.FC = () => {
             <Link to={link.path}>
               <li
                 key={index}
-                className={`w-full mb-3 text-lg flex flex-row items-center rounded-full cursor-pointer hover:text-blue-600 transition duration-150 px-5 py-3 ${isActive ? "text-blue-600 font-medium bg-blue-100" : "text-slate-400"}`}
+                className={`mb-3 flex flex-row items-center  ${showDrawer ? "justify-start w-full" : "justify-center w-10 h-10"} rounded-full cursor-pointer hover:text-blue-900 transition duration-150 px-4 py-2 ${isActive ? "text-blue-900 font-medium bg-blue-50" : "text-slate-400"}`}
               >
-                <link.icon size={20} className="mr-4" />
-                {link.name}
+                <link.icon
+                  size={18}
+                  className={showDrawer ? "mr-4 " : "mr-0"}
+                />
+                {showDrawer && link.name}
               </li>
             </Link>
           );

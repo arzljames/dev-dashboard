@@ -17,5 +17,9 @@ const MainContainer: React.FC<Props> = ({ children }) => {
 export default MainContainer;
 
 const ChildrenWrapper = ({ children }: Props) => {
-  return <div className="flex-1 bg-slate-100 rounded-2xl"> {children}</div>;
+  return (
+    <div className="flex-1 bg-slate-100 rounded-2xl overflow-hidden">
+      {children}
+    </div>
+  );
 };
