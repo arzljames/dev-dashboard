@@ -27,7 +27,7 @@ import { TASK_PRIORITY_LEVEL } from "@/constant";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { createItem, getItem, updateItem } from "@/utils/storageService";
+
 import { useForm, type SubmitHandler } from "react-hook-form";
 import React, {
   useEffect,
@@ -36,6 +36,9 @@ import React, {
   type Dispatch,
   type SetStateAction,
 } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useCreateTaskItem } from "../../hooks/useReactQuery";
+import { createLocalStorageEntry, getItem } from "../../services";
 
 export type Inputs = {
   title: string;
@@ -60,13 +63,21 @@ const CreateForm: React.FC<Props> = ({ setOpen }) => {
   const [date, setDate] = useState<Date>();
   const [sectionsData, setSectionsData] = useState<SectionsDataProps[]>([]);
 
+  // React query hook
+  const {
+    mutate: createItemMutate,
+    isSuccess: isCreateSuccess,
+    isPending: isCreating,
+  } = useCreateTaskItem();
+
   // React hook form
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     setValue,
     watch,
+    reset,
   } = useForm<Inputs>();
 
   // Handler to register and validate status of item
@@ -89,25 +100,14 @@ const CreateForm: React.FC<Props> = ({ setOpen }) => {
 
   // Handler to to submit create new item
   const handleCreateItem: SubmitHandler<Inputs> = (data) => {
+    const uniqueId = uuidv4();
     const inputValues = { ...data };
 
     if (!data.priority) inputValues.priority = 2; // default to no normal priority
     if (!data.status) inputValues.status = 0; // default to no status
     if (!data.startDate) inputValues.startDate = new Date().toDateString(); // default to today
 
-    const savedExistingTasks = getItem({ key: "TASKS" });
-
-    // If there is no saved existing tasks in local storage create and entry
-    if (!savedExistingTasks) {
-      const initialData = [{ ...inputValues }];
-      createItem({ key: "TASKS", value: initialData });
-      return;
-    }
-
-    // If there's an existing tasks already
-    // update the the entry with new item
-    const updatedTasks = [...savedExistingTasks, inputValues];
-    updateItem({ key: "TASKS", value: updatedTasks });
+    createItemMutate({ ...inputValues, id: uniqueId });
   };
 
   // Fetch the list of saved sections from the local storage
@@ -119,7 +119,7 @@ const CreateForm: React.FC<Props> = ({ setOpen }) => {
     // Default first section is Queued — No Status
     if (!savedSections) {
       const initialData = [{ id: 0, title: "Queued — No Status" }];
-      createItem({ key: "STATUS_SECTION", value: initialData });
+      createLocalStorageEntry({ key: "STATUS_SECTION", value: initialData });
       setSectionsData(initialData);
       return;
     }
@@ -138,6 +138,12 @@ const CreateForm: React.FC<Props> = ({ setOpen }) => {
       setValue("startDate", new Date().toISOString());
     }
   }, [watchedEffortDays]);
+
+  useEffect(() => {
+    if (isCreateSuccess) setOpen(false);
+
+    if (isCreateSuccess) reset();
+  }, [isCreateSuccess, isCreating]);
 
   const endDateValue = useMemo(() => {
     if (!watchedEffortDays || !watchedStartDate) {
@@ -167,7 +173,7 @@ const CreateForm: React.FC<Props> = ({ setOpen }) => {
     }
   }, [watchedPriority]);
   return (
-    <DialogContent className="bg-white outline-none border-none rounded-[10px] max-h-[500px] h-full justify-between flex flex-col min-w-[600px]">
+    <DialogContent className="bg-white outline-none border-none rounded-none md:rounded-[10px] min-w-[100%] max-h-[100%] md:max-h-[500px] h-full justify-between flex flex-col md:min-w-[600px]">
       <DialogHeader className="mb-4">
         <DialogTitle className="font-normal">Add New Task</DialogTitle>
       </DialogHeader>
@@ -338,10 +344,11 @@ const CreateForm: React.FC<Props> = ({ setOpen }) => {
           </Button>
         </DialogClose>
         <Button
+          disabled={isCreating || !isValid}
           onClick={handleSubmit(handleCreateItem)}
           className="!bg-blue-500 rounded-[6px] text-white font-normal min-w-30 hover:!bg-blue-600 cursor-pointer transition duration-150"
         >
-          Create
+          {isCreating ? "Creating..." : "Create"}
         </Button>
       </DialogFooter>
     </DialogContent>
