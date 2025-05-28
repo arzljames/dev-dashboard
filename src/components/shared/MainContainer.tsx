@@ -1,5 +1,5 @@
 import React from "react";
-import AppSiderbar from "@/components/app-sidebar";
+import AppSiderbar from "./AppSidebar";
 
 type Props = {
   children: React.ReactNode;
