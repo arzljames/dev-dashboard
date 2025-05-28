@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import "../index.css";
-import MainContainer from "@/components/shared/main-container";
+import MainContainer from "@/components/shared/MainContainer";
 
 export const Route = createRootRoute({
   component: RootComponent,

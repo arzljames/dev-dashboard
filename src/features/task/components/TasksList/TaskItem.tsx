@@ -1,12 +1,7 @@
 import { Calendar } from "lucide-react";
 import React from "react";
 
-type Props = {
-  title: string;
-  description: string;
-};
-
-const Taskitem: React.FC = () => {
+const TaskItem: React.FC = () => {
   return (
     <div className="w-full border border-white bg-white h-auto min-h-30 p-4 rounded-[10px] mb-[6px] shadow-sm flex flex-col justify-between cursor-pointer">
       <h3 className="text-lg text-gray-800 mb-2">This is a sample task</h3>
@@ -38,4 +33,4 @@ const Taskitem: React.FC = () => {
   );
 };
 
-export default Taskitem;
+export default TaskItem;
