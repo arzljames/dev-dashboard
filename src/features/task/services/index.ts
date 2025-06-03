@@ -1,23 +1,13 @@
 // Services for CRUD
 
+import type {
+  LocalStorageProps,
+  NewTaskItemProps,
+  SectionListProps,
+} from "../types";
+
 // We will utilize Local Storage for now but we can integrate
 // APIs in the future for enhancement
-
-type LocalStorageProps = {
-  key: string;
-  value: string | number | object;
-};
-
-export type NewTaskItemProps = {
-  id: string;
-  title: string;
-  description: string;
-  status: number;
-  priority: number;
-  startDate: string;
-  effortDays: number;
-  endDate: string;
-};
 
 // Serialize value for type safety
 const serialize = (value: string | number | object): string => {
@@ -45,6 +35,7 @@ const updateItem = ({ key, value }: LocalStorageProps) => {
   }
 };
 
+// Function to create new task item
 export const createTaskItem = async (
   data: NewTaskItemProps
 ): Promise<NewTaskItemProps> => {
@@ -63,6 +54,42 @@ export const createTaskItem = async (
     return data;
   } catch (error) {
     throw new Error(`Unable to create new task item`);
+  }
+};
+
+// Function to fetch all sections saved in local storage
+export const getSectionList = async (): Promise<SectionListProps[]> => {
+  try {
+    const sectionsData = localStorage.getItem("STATUS_SECTION");
+
+    if (!sectionsData) return [];
+
+    return JSON.parse(sectionsData);
+  } catch (error) {
+    throw new Error(`Unable to fetch section list`);
+  }
+};
+
+// Function to fetch all sections saved in local storage
+export const getTasksList = async (
+  sectionId?: string | number | undefined
+): Promise<NewTaskItemProps[]> => {
+  try {
+    const tasksData = localStorage.getItem("TASKS");
+
+    if (!tasksData) return [];
+
+    const parsedData = JSON.parse(tasksData);
+
+    if (sectionId) {
+      return parsedData.filter(
+        (task: NewTaskItemProps) => task.status === sectionId
+      );
+    }
+
+    return parsedData;
+  } catch (error) {
+    throw new Error(`Unable to fetch section list`);
   }
 };
 

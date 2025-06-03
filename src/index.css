@@ -53,6 +53,14 @@ body {
   padding: 0;
 }
 
+.two-line-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical; /* Required for line clamping */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
